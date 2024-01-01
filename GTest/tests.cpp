@@ -7,7 +7,7 @@ using TestQueue = typename SafeQueue<int>;
 using Result = typename TestQueue::Result;
 using Item = typename TestQueue::Item;
 
-TEST(SafeQue, Closed) {
+TEST(SafeQueueTest, Closed) {
     TestQueue q(0);
     q.close();
     ASSERT_EQ(q.get_closed(), true);
@@ -20,12 +20,12 @@ TEST(SafeQue, Closed) {
     EXPECT_EQ(item, -1);
 }
 
-TEST(SafeQue, ZeroSize) {
+TEST(SafeQueueTest, ZeroSize) {
     TestQueue q(0);
     EXPECT_EQ(q.get_closed(), true);
 }
 
-TEST(SafeQue, MaxSize_1) {
+TEST(SafeQueueTest, MaxSize_1) {
     TestQueue q(1);
     EXPECT_EQ(q.get_max_size(), 1);
     ASSERT_EQ(q.get_closed(), false);
@@ -42,7 +42,7 @@ TEST(SafeQue, MaxSize_1) {
     EXPECT_EQ(item, 2);
 }
 
-TEST(SafeQue, FIFO) {
+TEST(SafeQueueTest, FIFO) {
     constexpr unsigned int QueueMaxSize = 1000;
 
     TestQueue q(QueueMaxSize);
@@ -62,7 +62,7 @@ TEST(SafeQue, FIFO) {
     EXPECT_EQ(q.pop(item), Result::Empty);
 }
 
-TEST(SafeQue, find_if) {
+TEST(SafeQueueTest, find_if) {
     constexpr int QueueMaxSize = 10;
 
     TestQueue q(QueueMaxSize);

@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SafeQueueTest2.cpp">
+    <ClCompile Include="safe_queue_demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

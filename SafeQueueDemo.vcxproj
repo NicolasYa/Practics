@@ -22,8 +22,9 @@
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{5c59fdd8-0eca-49af-b66f-2117028dd2bf}</ProjectGuid>
-    <RootNamespace>SafeQueueTest2</RootNamespace>
+    <RootNamespace>SafeQueueDemo</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>SafeQueueDemo</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -135,13 +136,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SafeQueueTest2.cpp" />
+    <ClCompile Include="safe_queue_demo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="safe_queue.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="GTest\GTest.vcxproj">
+      <Project>{6c9e1997-65eb-4ab6-8ab7-b034360ab288}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

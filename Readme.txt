@@ -6,7 +6,8 @@ Tool: MS Visual Studo 2022
 i) Results
 
 File "safe_queue.h" - contains decription and implementation of an asynchronous message exchange template class "SafeQueue"   
-File  "safe_queue_test.cpp" - contains decription  and implementation of demo tests for class  "SafeQueue" (as Win32 console application)
+File "safe_queue_demo.cpp" - contains decription  and implementation of demo for class  "SafeQueue" (as Win32 console application)
+File ".\GTest\tests.cpp" - contains some google tests for class "SafeQueue" (as Win32 console application)
 
 ii) Task and requirements:
 
@@ -17,7 +18,7 @@ Requirements:
 1. 
 Queue must be of fixed size (specified during construction)
 2. 
-Queue ‘pop’ operation must be blocking: returns a message or blocks waiting for it
+Queue ‘pop_blocked’ operation must be blocking: returns a message or blocks operation for time waiting for message
 3. 
 Queue ‘push’ operation must be non-blocking: in case message addition is not possible, returns an error.
 4. 
@@ -34,7 +35,7 @@ Make ‘push’ enterable by several ‘writer’ threads, ‘pop’ enterable by several ‘r
 9. 
 Implement get (PREDICATE) method, which accepts predicate, and returns first matching element from the queue.
 10. 
-Implement blocking ‘push’ method: in case message addition is not possible, wait until it possible
+Implement 'push_blocked' method: in case message addition is not possible, wait until it possible
 11. 
 Implement non-blocking ‘pop’ method: in case message is not available, return an error
 
