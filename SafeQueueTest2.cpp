@@ -1,12 +1,12 @@
 //
-//  safe_queue_test.cpp : C++ safe queue demo test (console app)
+//  SafeQueueTest2.cpp : C++ safe queue demo (console app)
 //
 //  Author: Victor V. Rudakov
 //  
-//  This constants can be changed in source code for testing:
-//  TestQueueMaxSize      - size of tested safe queue ( >= 0 )
-//  TestWorkTime          - normal work period for writer and readers (in seconds)
-//  TestFinishingTime - only readers and blocked writers are working while finising queue processing (in seconds)
+//  This constants can be changed in source code for demo:
+//  DemoQueueMaxSize      - size of demo safe queue ( >= 0 )
+//  DemoWorkTime          - normal work period for writer and readers (in seconds)
+//  DemoFinishingTime - only readers and blocked writers are working while finising queue processing (in seconds)
 //
 //  WriterProduceMaxDelay - Max value for randomly generated Writer message pushing (in milliseconds)
 //  ReaderProcessingDelay - time for simulating readers work with popped message (in milliseconds)
@@ -18,8 +18,9 @@
 //
 //  While concurrent threads are working console output used for some animation only 
 //  (text output order can depend from race conditions).
-//  Accurate checks will be done after all threads are finised (based on collected test data)
+//  Accurate checks will be done after all threads are finised (based on collected data)
 //
+
 
 #include <iostream>
 #include <thread>
@@ -29,33 +30,22 @@
 
 #include "safe_queue.h"
 
-
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
-
-class MockDatabase
-{
-public:
-    MOCK_METHOD(bool, CheckMap, ((std::string), bool));
-};
-
-
 using namespace std;
 
 namespace { // anonymous
 
 //--------------------------------------------------------------------------
-// Change this values for testing:
+// Change this values for demonstration:
 
-constexpr unsigned int TestQueueMaxSize = 30;  // size of tested safe queue
+constexpr unsigned int DemoQueueMaxSize = 30;  // size of demo safe queue
 
-constexpr unsigned int TestWorkTime      = 10;  // sec, normal work period for writer and readers
-constexpr unsigned int TestFinishingTime = 5;   // sec, only readers are works for finising queue processing (writres are stoped)
+constexpr unsigned int DemoWorkTime      = 10;  // sec, normal work period for writer and readers
+constexpr unsigned int DemoFinishingTime = 5;   // sec, only readers are works for finising queue processing (writres are stoped)
 
 constexpr unsigned int WriterProduceMaxDelay = 300;  // ms
 constexpr unsigned int ReaderProcessingDelay = 500;  // ms
 
-constexpr unsigned FullTime = TestWorkTime + TestFinishingTime;
+constexpr unsigned FullTime = DemoWorkTime + DemoFinishingTime;
 
 void print_to_console(const string text);
 
@@ -219,7 +209,7 @@ void executing_non_blocked_pop(unsigned reader_id, const bool& running, DemoQueu
 
 //--------------------------------------------------------------------------
 
-void print_analized_test_results(ostream& out_stream
+void print_analized_demo_results(ostream& out_stream
     , const DemoQueue& demo_queue
     , const Messages& pushed_messages
     , const Messages& popped_messages
@@ -230,9 +220,10 @@ void print_analized_test_results(ostream& out_stream
 
     out_stream << "Safe queue push/pop demo results:" << endl;
     out_stream << "Safe queue size: " << safe_queue_size << endl;
-    out_stream << "Real Pushed messages: " << pushed_size << endl;
-    out_stream << "Real Popped messages: " << popped_size << endl;
+    out_stream << "Real pushed messages: " << pushed_size << endl;
+    out_stream << "Real popped messages: " << popped_size << endl;
 
+    out_stream << "Safe queue push/pop collected data checking..." << endl;
     bool ok = true;
     Messages::size_type lost_pushed = (pushed_size - safe_queue_size) - popped_size;
     if (lost_pushed > 0) {
@@ -254,7 +245,7 @@ void print_analized_test_results(ostream& out_stream
             }
         }
     }
-    out_stream << "Safe queue push/pop test " << (ok ? "PASSED" : "FAILED") << endl;
+    out_stream << "Safe queue push/pop check " << (ok ? "PASSED" : "FAILED") << endl;
 }
 
 //--------------------------------------------------------------------------
@@ -292,17 +283,17 @@ int main() {
     cout
         << "Safe queue push/pop demo started for " << FullTime << " sec, with:" << endl
         << endl
-        << "Demo full work time = " << TestWorkTime << " sec" << endl
-        << "Demo finishing time = " << TestFinishingTime << " sec" << endl
+        << "Demo full work time = " << DemoWorkTime << " sec" << endl
+        << "Demo finishing time = " << DemoFinishingTime << " sec" << endl
         << endl
-        << "Safe queue max size       = " << TestQueueMaxSize << " messages" << endl
+        << "Safe queue max size       = " << DemoQueueMaxSize << " messages" << endl
         << "Message pushing max delay = " << WriterProduceMaxDelay << " ms" << endl
         << "Message processing delay  = " << ReaderProcessingDelay << " ms" << endl
         << endl;
     cout.flush();
 
 
-    DemoQueue demo_queue(TestQueueMaxSize);
+    DemoQueue demo_queue(DemoQueueMaxSize);
     demo_queue.register_push_callback(function(push_callback));
     demo_queue.register_pop_callback(function(pop_callback));
 
@@ -326,13 +317,13 @@ int main() {
     run_reader_thread(executing_non_blocked_pop);
     //  [THREADS END]
 
-    this_thread::sleep_for(chrono::seconds(TestWorkTime));
+    this_thread::sleep_for(chrono::seconds(DemoWorkTime));
     print_to_console("Finishing...");
 
     // Stoping writers
     writers_running = false;
     // Add some time for readers and writers(with blocked push)
-    this_thread::sleep_for(chrono::seconds(TestFinishingTime));
+    this_thread::sleep_for(chrono::seconds(DemoFinishingTime));
 
     // Stoping readers
     readers_running = false;
@@ -346,9 +337,9 @@ int main() {
 
     cout << endl << "All readers and writers finished." << endl;
 
-    // Print test results
+    // Print results
     cout << endl;
-    print_analized_test_results(cout, demo_queue, g_pushed_messages, g_popped_messages);
+    print_analized_demo_results(cout, demo_queue, g_pushed_messages, g_popped_messages);
     cout << endl;
     return 0;
 }

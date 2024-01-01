@@ -1,5 +1,5 @@
 //
-//  safe_queue.cpp : This file contains class SafeQueue for implement thread safe access to queue
+//  safe_queue.h : This file contains class SafeQueue for implement thread safe access to queue
 //
 //  Author: Victor V. Rudakov
 // 
@@ -11,11 +11,11 @@
 // 
 //  SafeQueue( size_type ) - construct queue with desired size
 // 
-//  SafeQueue::push         - implemet non-blocked push item to queue
-//  SafeQueue::blocked_push - implemet blocked push item to queue
+//  SafeQueue::push         - implemet non-blocked push to queue
+//  SafeQueue::blocked_push - implemet blocked (wait for queue not full) push to queue
 // 
 //  SafeQueue::pop          - implemet non-blocked pop item from queue
-//  SafeQueue::blocked_pop  - implemet blocked pop item from queue
+//  SafeQueue::blocked_pop  - implemet blocked (wait for queue not empty) pop from queue
 // 
 //  SafeQueue::close - prevent queue from any changing and release all waiting threads
 //  SafeQueue::get_size - return queue size (thread safe)
