@@ -41,7 +41,7 @@ namespace { // anonymous
 
 constexpr unsigned int DemoQueueMaxSize = 30;  // size of demo safe queue
 
-constexpr unsigned int DemoWorkTime          = 10;   // sec, normal work period for writer and readers
+constexpr unsigned int DemoWorkTime          = 5;   // sec, normal work period for writer and readers
 constexpr unsigned int WriterProduceMaxDelay = 300;  // ms
 constexpr unsigned int ReaderProcessingDelay = 200;  // ms
 
@@ -306,7 +306,7 @@ int main() {
     auto run_writer_thread = bind(add_and_start, ref(threads), _1, ref(running), ref(demo_queue));
     auto run_reader_thread = bind(add_and_start, ref(threads), _1, ref(running), ref(demo_queue));
 
-    print_to_console("\nStarting readers and writers...");
+    print_to_console("Starting readers and writers...");
     //  [THREADS BEGIN]
     //  writers
     run_writer_thread(executing_non_blocked_push);
@@ -333,13 +333,13 @@ int main() {
     running = false;
 
     // release waiting in blocked pop/push:
-    print_to_console("Safe queue closed");
+    print_to_console("Safe queue is closed");
     demo_queue.close();
 
     for (auto& t : threads)
         t.join();
 
-    print_to_console("All readers and writers finished.\n\n");
+    print_to_console("All readers and writers have finished working.\n");
 
     // Print results
     print_analized_demo_results(cout, demo_queue, g_pushed_messages, g_popped_messages);
