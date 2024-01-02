@@ -27,10 +27,12 @@
 #include <vector>
 #include <sstream>
 #include <random>
+#include <chrono>
 
 #include "safe_queue.h"
 
 using namespace std;
+using namespace chrono;
 
 namespace { // anonymous
 
@@ -39,15 +41,9 @@ namespace { // anonymous
 
 constexpr unsigned int DemoQueueMaxSize = 30;  // size of demo safe queue
 
-constexpr unsigned int DemoWorkTime      = 10;  // sec, normal work period for writer and readers
-constexpr unsigned int DemoFinishingTime = 5;   // sec, only readers are works for finising queue processing (writres are stoped)
-
+constexpr unsigned int DemoWorkTime          = 10;   // sec, normal work period for writer and readers
 constexpr unsigned int WriterProduceMaxDelay = 300;  // ms
-constexpr unsigned int ReaderProcessingDelay = 500;  // ms
-
-constexpr unsigned FullTime = DemoWorkTime + DemoFinishingTime;
-
-void print_to_console(const string text);
+constexpr unsigned int ReaderProcessingDelay = 200;  // ms
 
 //--------------------------------------------------------------------------
 // Safe queue of strings are used for example 
@@ -60,11 +56,23 @@ using Messages = typename vector<Item>;
 //--------------------------------------------------------------------------
 
 static
+void print_curent_time(ostream& out_stream) {
+    auto now = time_point_cast<seconds>( system_clock::now() );
+    out_stream << "[" << format("{:%H:%M:%S}", now) << "] ";
+}
+
+//--------------------------------------------------------------------------
+
+static
 void print_to_console(const string text) {
     static mutex s_local_mutex;
 
     lock_guard<mutex> locker(s_local_mutex);
-    cout << text << endl;
+    ostringstream sout;
+    print_curent_time(sout);
+    sout << text << endl;
+
+    cout << sout.str();
 }
 
 //--------------------------------------------------------------------------
@@ -135,7 +143,7 @@ static
 void executing_non_blocked_push(unsigned writer_id, const bool& running, DemoQueue& demo_queue) {
     string writer_name(get_name("Writer", writer_id));
     while (running) {
-        this_thread::sleep_for(chrono::milliseconds(get_produce_delay()));
+        this_thread::sleep_for(milliseconds(get_produce_delay()));
         const auto item{ get_unique_string_value() };
         ostringstream output;
         output << writer_name << " Non-blocked push: ";
@@ -154,7 +162,7 @@ static
 void executing_blocked_push(unsigned writer_id, const bool& running, DemoQueue& demo_queue) {
     string writer_name(get_name("Writer", writer_id));
     while (running) {
-        this_thread::sleep_for(chrono::milliseconds(get_produce_delay()));
+        this_thread::sleep_for(milliseconds(get_produce_delay()));
         const auto item{ get_unique_string_value() };
         const auto result = demo_queue.blocked_push(item);
         ostringstream output;
@@ -179,7 +187,7 @@ void executing_blocked_pop(unsigned reader_id, const bool& running, DemoQueue& d
         output << reader_name << " Blocked pop: ";
         print_result(output, item, result);
         print_to_console(output.str());
-        this_thread::sleep_for(chrono::milliseconds(ReaderProcessingDelay));
+        this_thread::sleep_for(milliseconds(ReaderProcessingDelay));
     }
     ostringstream output;
     output << reader_name << " Finished";
@@ -194,13 +202,11 @@ void executing_non_blocked_pop(unsigned reader_id, const bool& running, DemoQueu
     while (running) {
         DemoQueue::Item item;
         const auto result = demo_queue.pop(item);
-        if (result == DemoQueue::Result::Success) {
-            ostringstream output;
-            output << reader_name << " Non-blocked pop: ";
-            print_result(output, item, result);
-            print_to_console(output.str());
-            this_thread::sleep_for(chrono::milliseconds(ReaderProcessingDelay));
-        }
+        ostringstream output;
+        output << reader_name << " Non-blocked pop: ";
+        print_result(output, item, result);
+        print_to_console(output.str());
+        this_thread::sleep_for(milliseconds(ReaderProcessingDelay));
     }
     ostringstream output;
     output << reader_name << " Finished";
@@ -281,10 +287,7 @@ int main() {
     using namespace placeholders;
     
     cout
-        << "Safe queue push/pop demo started for " << FullTime << " sec, with:" << endl
-        << endl
-        << "Demo full work time = " << DemoWorkTime << " sec" << endl
-        << "Demo finishing time = " << DemoFinishingTime << " sec" << endl
+        << "Safe queue push/pop demo started for " << DemoWorkTime << " sec, with:" << endl
         << endl
         << "Safe queue max size       = " << DemoQueueMaxSize << " messages" << endl
         << "Message pushing max delay = " << WriterProduceMaxDelay << " ms" << endl
@@ -298,15 +301,18 @@ int main() {
     demo_queue.register_pop_callback(function(pop_callback));
 
     vector<thread> threads;
-    bool writers_running = true;
-    bool readers_running = true;
+    bool running = true;
 
-    auto run_writer_thread = bind(add_and_start, ref(threads), _1, ref(writers_running), ref(demo_queue));
-    auto run_reader_thread = bind(add_and_start, ref(threads), _1, ref(readers_running), ref(demo_queue));
+    auto run_writer_thread = bind(add_and_start, ref(threads), _1, ref(running), ref(demo_queue));
+    auto run_reader_thread = bind(add_and_start, ref(threads), _1, ref(running), ref(demo_queue));
 
-    cout << "Starting readers and writers..." << endl;
+    print_to_console("\nStarting readers and writers...");
     //  [THREADS BEGIN]
     //  writers
+    run_writer_thread(executing_non_blocked_push);
+    run_writer_thread(executing_non_blocked_push);
+    run_writer_thread(executing_non_blocked_push);
+    run_writer_thread(executing_non_blocked_push);
     run_writer_thread(executing_non_blocked_push);
     run_writer_thread(executing_non_blocked_push);
     run_writer_thread(executing_blocked_push);
@@ -315,31 +321,27 @@ int main() {
     run_reader_thread(executing_blocked_pop);
     run_reader_thread(executing_blocked_pop);
     run_reader_thread(executing_non_blocked_pop);
+    run_reader_thread(executing_non_blocked_pop);
+    run_reader_thread(executing_non_blocked_pop);
+    run_reader_thread(executing_non_blocked_pop);
     //  [THREADS END]
 
-    this_thread::sleep_for(chrono::seconds(DemoWorkTime));
-    print_to_console("Finishing...");
+    this_thread::sleep_for(seconds(DemoWorkTime));
 
     // Stoping writers
-    writers_running = false;
-    // Add some time for readers and writers(with blocked push)
-    this_thread::sleep_for(chrono::seconds(DemoFinishingTime));
-
-    // Stoping readers
-    readers_running = false;
+    print_to_console("Finishing...");
+    running = false;
 
     // release waiting in blocked pop/push:
-    demo_queue.close();
     print_to_console("Safe queue closed");
+    demo_queue.close();
 
     for (auto& t : threads)
         t.join();
 
-    cout << endl << "All readers and writers finished." << endl;
+    print_to_console("All readers and writers finished.\n\n");
 
     // Print results
-    cout << endl;
     print_analized_demo_results(cout, demo_queue, g_pushed_messages, g_popped_messages);
-    cout << endl;
     return 0;
 }
