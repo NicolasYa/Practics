@@ -46,8 +46,9 @@
 *.mod*
 *.cmd
 
-#CodeBlocks layouts
+#CodeBlocks
 *.layout
+*.depend
 
 .tmp_versions/
 modules.order
