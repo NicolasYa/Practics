@@ -2,10 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-// for test only!
-#define system(a) printf("\n")
-#define _isnan(a) (!_finite(a))
-
 double factorial( int n )
 {
     return n < 2 ? 1 : ( n * factorial( n - 1 ) );
@@ -280,7 +276,7 @@ double calculate_sum7( double x, double accuracy )
     {
         prev_result = result;
         result = ( pow( -1, n ) * pow( x, n ) ) / factorial( n );
-        if( _isnan( result ) )
+        if( !_finite( result ) )
         {
             printf( "Error: incorrect value calculated!\n" );
             break;
@@ -334,7 +330,7 @@ double calculate_sum8( double x, double accuracy )
         n++;
         prev_result = result;
         result = ( pow( x, n ) * cos( ( n * M_PI ) / 3 ) ) / n;
-        if( _isnan( result ) )
+        if( !_finite( result ) )
         {
             printf( "Error: incorrect value calculated!\n" );
             break;
@@ -426,10 +422,10 @@ int main()
 //    main_6();
 //    main_7();
 //    main_8();
-    main_9();
-//do
-//{
-////    main_8();
-//} while(1);
+//    main_9();
+do
+{
+      main_9();
+} while(1);
     return 0;
 }
