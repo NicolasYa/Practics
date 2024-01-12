@@ -50,3 +50,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+/.vs
+/r1/r1_v1/r1_v1.layout
+/r2/r2_v1/r2_v1.layout
