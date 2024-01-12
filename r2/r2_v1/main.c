@@ -4,6 +4,7 @@
 
 // for test only!
 #define system(a) printf("\n")
+#define _isnan(a) (!_finite(a))
 
 double factorial( int n )
 {
@@ -169,7 +170,7 @@ int main_4()
     if( !get_int_value( "enter natural value from [3...]", &n ) )
         return -1;
 
-    if( n <= 2 )
+    if( n < 3 )
     {
         printf( "Error: incorrect value entered\n" );
         return -1;
@@ -249,8 +250,8 @@ int main_6()
         if( (new_m/denominator > 0) && (new_m%denominator == 0) &&
             (new_n/denominator > 0) && (new_n%denominator == 0) )
         {
-            new_m = new_m/denominator;
-            new_n = new_n/denominator;
+            new_m /= denominator;
+            new_n /= denominator;
             printf( "\n%d/%d", new_m, new_n );
         }
         denominator++;
@@ -392,10 +393,10 @@ int main_9()
         return -1;
     }
 
-    for( int number = 3; number <= k; number++ )
+    for( int number = 2; number <= k; number++ )
     {
         int is_simple = 1;
-        for( int divider = 2; divider < number; divider++ )
+        for( int divider = 2; divider <= number - 1; divider++ )
         {
             if( number%divider == 0 )
             {
@@ -403,7 +404,7 @@ int main_9()
                 break;
             }
         }
-        if( is_simple == 1 )
+        if( is_simple == 0 )
         {
             printf( "%d\n", number );
         }
@@ -425,10 +426,10 @@ int main()
 //    main_6();
 //    main_7();
 //    main_8();
-//    main_9();
-do
-{
-    main_8();
-} while(1);
+    main_9();
+//do
+//{
+////    main_8();
+//} while(1);
     return 0;
 }
