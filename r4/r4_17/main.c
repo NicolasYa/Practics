@@ -3,7 +3,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-int get_array(char name, int* array, int size)
+int get_array(char name, int array[], int size)
 {
     if (array == 0 || size <= 0)
     {
@@ -29,7 +29,7 @@ int get_array(char name, int* array, int size)
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-void print_array(char name, int* array, int size)
+void print_array(char name, int array[], int size)
 {
     if( array == 0 || size <= 0 )
     {
@@ -44,7 +44,7 @@ void print_array(char name, int* array, int size)
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-void sort_array(int* array, int size)
+void sort_array(int array[], int size)
 {
     for (int i=0; i < size; i++)
     {
