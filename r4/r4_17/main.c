@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -248,13 +249,70 @@ int main_3()
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
+//    Вычислить min
+//    Z = Xmin / (Xmax+Xmin)
+//    , где Xmin и Xmax – минимальный положительный и максимальный элементы матрицы.
+
+int main_4()
+{
+    const int Raws = 3;
+    const int Columns = 4;
+    int M[Raws][Columns];
+
+    if (!get_matrix("M", Raws, Columns, M))
+    {
+        return -1;
+    }
+    print_matrix("M", Raws, Columns, M);
+
+    int positive_max = INT_MIN;
+    int positive_min = INT_MAX;
+
+    for (int i = 0; i < Raws; i++)
+        for (int j = 0; j < Columns; j++)
+        {
+            int item = M[i][j];
+            if( item < 0 )
+                continue;
+            if (item < positive_min)
+                positive_min = item;
+            if (item > positive_max)
+                positive_max = item;
+        }
+
+    if (positive_min == INT_MAX )
+        printf("\nXmin not found");
+    else
+        printf("\nXmin: %d", positive_min);
+
+    if (positive_max == INT_MIN )
+        printf("\nXmax not found");
+    else
+        printf("\nXmax: %d", positive_max);
+
+    if (positive_min != INT_MAX && positive_max != INT_MIN)
+    {
+        float devider = positive_min + positive_max;
+        if (devider != 0)
+            printf("\nXmin/(Xmin + Xmax) = %f", positive_min/devider);
+        else
+            printf("\nError: Xmin + Xmax = 0");
+    }
+    printf("\n");
+
+    system("pause");
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
 
 int main()
 {
 //    main_1();
 //    main_2();
+//    main_3();
 do {
-      main_3();
+      main_4();
 } while(1);
     return 0;
 }
