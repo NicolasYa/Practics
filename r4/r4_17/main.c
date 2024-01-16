@@ -36,10 +36,9 @@ void print_array(char* name, int array[], int size)
         printf("\nInternal error: incorrect array print params");
         return;
     }
-    printf("\n%s: { ", name);
-    for (int i=0; i < size-1; i++)
-        printf("%d, ", array[i]);
-    printf("%d }\n", array[size-1]);
+    printf("\n%s: ", name);
+    for (int i=0; i < size; i++)
+        printf("%d\t", array[i]);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -82,12 +81,11 @@ void print_matrix(char* name, int raws, int columns, int matrix[raws][columns])
     printf("\n%s [%d,%d]:\n", name, raws, columns);
     for (int i=0; i < raws; i++)
     {
-        printf("{ ");
-        for (int j=0; j < columns-1; j++)
+        for (int j=0; j < columns; j++)
         {
             printf("%d\t", matrix[i][j]);
         }
-        printf("%d }\n", matrix[i][columns-1]);
+        printf("\n");
     }
 }
 
@@ -128,25 +126,27 @@ int main_1()
         return -1;
     }
 
-    printf("\nArrays before sorting:\n");
-    print_array("A", A, Size_A);
-    print_array("B", B, Size_B);
-
     for (int i=0; i < Size_A; i++)
         C[i] = A[i];
 
     for (int i=0; i < Size_B; i++)
         C[Size_A + i] = B[i];
 
-    sort_array(A, Size_A);
-    sort_array(B, Size_B);
-    sort_array(C, Size_C);
-
-    printf("\nArrays after sorting:\n");
+    printf("\nArrays before sorting:");
     print_array("A", A, Size_A);
     print_array("B", B, Size_B);
     print_array("C", C, Size_C);
 
+    sort_array(A, Size_A);
+    sort_array(B, Size_B);
+    sort_array(C, Size_C);
+
+    printf("\nArrays after sorting:");
+    print_array("A", A, Size_A);
+    print_array("B", B, Size_B);
+    print_array("C", C, Size_C);
+
+    printf("\n");
     system("pause");
     return 0;
 }
@@ -165,7 +165,7 @@ int main_2()
         return -1;
     }
 
-    printf("\nArray before changes:\n");
+    printf("\nArray before changes:");
     print_array("A", A, Size);
 
     for (int i = 0;i < Size; i++)
@@ -188,9 +188,10 @@ int main_2()
         }
     }
 
-    printf("\nArray after changes:\n");
+    printf("\nArray after changes:");
     print_array("A", A, Size);
 
+    printf("\n");
     system("pause");
     return 0;
 }
@@ -200,6 +201,21 @@ int main_2()
 //    нем пар соседних одинаковых элементов. Элементы считаются сосед-
 //    ними, если их индексы в столбцах и/или в строках различаются не
 //    более чем на единицу.
+//
+//    Пример работы:
+//    M [3,4]:
+//    1 2 3 4
+//    1 0 3 0
+//    0 1 0 0
+//
+//    M [3,4]:
+//    1       2       3       4
+//    1       0       3       0
+//    0       1       0       0
+//
+//    Pairs detected: 8
+//    Для продолжения нажмите любую клавишу . . .
+
 
 int main_3()
 {
@@ -215,33 +231,30 @@ int main_3()
     print_matrix("M", Raws, Columns, M);
 
     int pairs = 0;
-    for (int i = 0; i < Raws-1; i++)
-        for (int j = 0; j < Columns-1; j++)
+    for (int i = 1; i < Raws; i++)
+        for (int j = 1; j < Columns; j++)
         {
-            if (M[i][j] == M[i+1][j])
+            if (M[i][j] == M[i-1][j])
                 pairs++;
-            if (M[i][j] == M[i][j+1])
+            if (M[i][j] == M[i][j-1])
                 pairs++;
-            if (M[i][j] == M[i+1][j+1])
+            if (M[i][j] == M[i-1][j-1])
                 pairs++;
-            if (M[i+1][j] == M[i][j+1])
+            if (M[i-1][j] == M[i][j-1])
                 pairs++;
         }
-
-    int last_raw = Raws-1;
-    for (int j = 0; j < Columns-1; j++)
+    // check first raw:
+    for (int j = 1; j < Columns; j++)
     {
-        if (M[last_raw][j] == M[last_raw][j+1])
+        if (M[0][j] == M[0][j-1])
             pairs++;
     }
-
-    int last_column = Columns-1;
-    for (int i = 0; i < Raws-1; i++)
+    // check first column:
+    for (int i = 1; i < Raws; i++)
     {
-        if (M[i][last_column] == M[i+1][last_column])
+        if (M[i][0] == M[i-1][0])
             pairs++;
     }
-
     printf("\nPairs detected: %d\n", pairs);
 
     system("pause");
@@ -298,8 +311,8 @@ int main_4()
         else
             printf("\nError: Xmin + Xmax = 0");
     }
-    printf("\n");
 
+    printf("\n");
     system("pause");
     return 0;
 }
@@ -311,6 +324,7 @@ int main()
 //    main_1();
 //    main_2();
 //    main_3();
+//    main_4();
 do {
       main_4();
 } while(1);
