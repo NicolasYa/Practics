@@ -97,12 +97,38 @@ int main_1_simple()
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
+int main_2()
+{
+    char delimiters[]="\n\t ";
+    char s[]= "11x22 3366666f 44y552";
+
+    char* max_token = NULL;
+    int max_length = 0;
+
+    char* token = strtok( s, delimiters );
+    while (token != NULL)
+    {
+        int length = strlen(token);
+        if (length >= max_length)
+        {
+            max_length = length;
+            max_token = token;
+        }
+        token = strtok( NULL, delimiters );
+    }
+
+    printf("\nMax word: \"%s\"\n", max_token);
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
 int main()
 {
 //    main_1();
 //    main_2();
 //do {
-      main_1_simple();
+      main_2();
 //} while(1);
     return 0;
 }
