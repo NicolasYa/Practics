@@ -6,7 +6,7 @@
 
 int get_array(char* name, int array[], int size)
 {
-    if (name == 0 || array == 0 || size <= 0)
+    if (name == NULL || array == NULL || size <= 0)
     {
         printf("\nInternal error: incorrect array params");
         return 0;
@@ -31,7 +31,7 @@ int get_array(char* name, int array[], int size)
 
 void print_array(char* name, int array[], int size)
 {
-    if (name == 0 || array == 0 || size <= 0)
+    if (name == NULL || array == NULL || size <= 0)
     {
         printf("\nInternal error: incorrect array print params");
         return;
@@ -45,7 +45,7 @@ void print_array(char* name, int array[], int size)
 
 int get_matrix(char* name, int raws, int columns, int matrix[raws][columns])
 {
-    if (name == 0 || matrix == 0 || raws <= 0 || columns <= 0)
+    if (name == NULL || matrix == NULL || raws <= 0 || columns <= 0)
     {
         printf("\nInternal error: incorrect matrix params");
         return 0;
@@ -73,7 +73,7 @@ int get_matrix(char* name, int raws, int columns, int matrix[raws][columns])
 
 void print_matrix(char* name, int raws, int columns, int matrix[raws][columns])
 {
-    if (name == 0 || matrix == 0 || raws <= 0 || columns <= 0)
+    if (name == NULL || matrix == NULL || raws <= 0 || columns <= 0)
     {
         printf("\nInternal error: incorrect matrix params");
         return;
