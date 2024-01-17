@@ -165,8 +165,8 @@ int main_3() {
     int N = 15;
     double result1, result2;
 
-    result1 = newton(a1, b1, N, &func1);
-    result2 = newton(a2, b2, N, &func2);
+    result1 = newton(a1, b1, N, func1);
+    result2 = newton(a2, b2, N, func2);
 
     printf("Integral (cos(x) / (1 + sin^2(x))) / [5, 1] = %f\n", result1);
     printf("Integral x * e^(x+1) / [3, -1] = %f\n", result2);
