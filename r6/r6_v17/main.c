@@ -70,12 +70,39 @@ int main_1()
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
+int main_1_simple()
+{
+    char s[]= "11x22 33 44y55";
+    int N = 2;
+    int length = strlen(s);
+
+    if (length < 2*N)
+    {
+        printf("\nError: string too small");
+        return 0;
+    }
+
+    printf("\nN: %d\nBefore:\"%s\"\n", N, s );
+
+    for(int i = 0, j = length-N; i < N; i++,j++)
+    {
+        char tmp = s[i];
+        s[i] = s[j];
+        s[j] = tmp;
+    }
+
+    printf("\nAfter: \"%s\"\n", s);
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
 int main()
 {
 //    main_1();
 //    main_2();
-do {
-      main_1();
-} while(1);
+//do {
+      main_1_simple();
+//} while(1);
     return 0;
 }
