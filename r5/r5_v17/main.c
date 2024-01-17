@@ -65,13 +65,61 @@ void main_1()
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
+int find_2_negatives( int column, int raws, int columns, int matrix[raws][columns])
+{
+    int negatives = 0;
+    for (int i=0; i < raws; i++)
+    {
+        if (matrix[i][column] < 0)
+            negatives++;
+    }
+    return negatives == 2;
+}
+
+void main_2()
+{
+    int B[4][3]=
+        {
+            {-1, 2,  3 },
+            { 1, 2, -3 },
+            { 1, 2, -3 },
+            {-1, 2,  3 },
+         };
+
+    int C[3][4]=
+        {
+            {1, -2, 3, -4 },
+            {1,  2, 3, -4 },
+            {1, -2, 3, -4 },
+         };
+
+    printf("\nB:");
+    print_matrix(4, 3, B);
+
+    printf("\nC:");
+    print_matrix(3, 4, C);
+
+
+    printf("\nIn matrix B 2 negatives in columns: ");
+    for (int j = 0; j<3; j++)
+        if ( find_2_negatives(j, 4, 3, B))
+            printf("%d ", j+1);
+
+    printf("\nIn matrix C 2 negatives in columns: ");
+    for (int j = 0; j<4; j++)
+        if ( find_2_negatives(j, 3, 4, C))
+            printf("%d ", j+1);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
 int main()
 {
 //    main_1();
 //    main_2();
 //    main_3();
 //do {
-      main_1();
+      main_2();
 //} while(1);
     return 0;
 }
