@@ -99,9 +99,9 @@ int main_1_simple()
 
 int main_2()
 {
-    char delimiters[]="\n\t ";
-    char s[]= "11x22 3366666f 44y552";
+    char s[]= "\t12f\n  11x22 44y552";
 
+    char delimiters[]="\n\t ";
     char* max_token = NULL;
     int max_length = 0;
 
@@ -117,7 +117,44 @@ int main_2()
         token = strtok( NULL, delimiters );
     }
 
-    printf("\nMax word: \"%s\"\n", max_token);
+    if (max_token != NULL)
+        printf("\nMax word: \"%s\"\n", max_token);
+    else
+        printf("\nMax word: not found\n");
+
+//    char max_word[1000]; // word buffer
+//    int max_word_length = 0;
+//    int word_begin=0;
+//    int word_end=0;
+//    int string_len = strlen(s);
+//    for (int i = 0; i < string_len; i++)
+//    {
+//        if (s[i] == ' ' || s[i] == '\t' || s[i] == '\n')
+//            continue;
+//        // word started
+//        word_begin = i;
+//        for (i++; i < string_len; i++)
+//        {
+//            char c = s[i];
+//            if (c == ' ' || c == '\t' || c == '\n')
+//                break; // delimiter detected
+//        }
+//        word_end = i;
+//        int word_length = word_end - word_begin;
+//        if (word_length > max_word_length)
+//        {
+//            max_word_length = word_length;
+//            // save max word
+//            strncpy(max_word, &(s[word_begin]), max_word_length);
+//            max_word[word_end] = '\0';
+//        }
+//    }
+//
+//    if( max_word_length > 0 )
+//        printf("\nMax word: \"%s\"\n", max_word);
+//    else
+//        printf("\nMax word: not found\n");
+
     return 0;
 }
 
