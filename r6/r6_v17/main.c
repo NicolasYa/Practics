@@ -105,7 +105,7 @@ int main_2()
     char* max_token = NULL;
     int max_length = 0;
 
-    char* token = strtok( s, delimiters );
+    char* token = strtok(s, delimiters);
     while (token != NULL)
     {
         int length = strlen(token);
