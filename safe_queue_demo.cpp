@@ -55,6 +55,33 @@ using Messages = typename vector<Item>;
 
 //--------------------------------------------------------------------------
 
+class spinlock
+{
+public:
+    spinlock() {
+        lock_flag.clear();
+    }
+
+    bool try_lock() {
+        return !lock_flag.test_and_set(std::memory_order_acquire);
+    }
+
+    void lock() {
+        for (size_t i = 0; !try_lock(); ++i)
+            if (i % 100 == 0)
+                std::this_thread::yield();
+    }
+
+    void unlock() {
+        lock_flag.clear(std::memory_order_release);
+    }
+
+private:
+    std::atomic_flag lock_flag;
+};
+
+//--------------------------------------------------------------------------
+
 static
 void print_curent_time(ostream& out_stream) {
     auto now = time_point_cast<seconds>( system_clock::now() );
@@ -65,9 +92,9 @@ void print_curent_time(ostream& out_stream) {
 
 static
 void print_to_console(const string text) {
-    static mutex s_local_mutex;
+    static mutex s_mutex;
 
-    lock_guard<mutex> locker(s_local_mutex);
+    lock_guard<mutex> locker(s_mutex);
     ostringstream sout;
     print_curent_time(sout);
     sout << text << endl;
@@ -79,13 +106,11 @@ void print_to_console(const string text) {
 
 static
 string get_unique_string_value() {
-    static volatile int s_value_index{};
-    static mutex        s_local_mutex;
+    static std::atomic<int> s_index;
+    int unique_index = s_index.fetch_add(1);
 
-    unique_lock<mutex> locker(s_local_mutex);
-    ++s_value_index;
     ostringstream unique_value;
-    unique_value << "\"String_" << s_value_index << "\"";
+    unique_value << "\"String_" << unique_index << "\"";
     return unique_value.str();
 }
 
@@ -96,6 +121,9 @@ unsigned get_produce_delay() {
     static random_device rd;
     static mt19937 s_gen(rd());
     static uniform_int_distribution<> distr(0, WriterProduceMaxDelay);
+
+    static spinlock s_spinlock;
+    lock_guard<spinlock> locker(s_spinlock);
 
     return distr(s_gen);
 }
