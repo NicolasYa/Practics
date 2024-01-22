@@ -15,8 +15,8 @@
 #define MAX_STUFF_LAST_NAME 10
 
 char file_name[] = "data.txt";
-char input_format[] = "фамилия=%s год_рождения=%u пол=%c образование=%c год_работы=%u";
-char output_format[] = "%s,\t %uг.р., пол: %s, образование: %s, работает с: %uг.";
+char input_format[] = "фамилия=%s год_рождения=%u пол=%c образование=%c год_работы=%u\n";
+char output_format[] = "%s,\t%uг.р., пол: %s, образование: %s,\tработает с: %uг.";
 
 // Пример данных в файле:
 //    фамилия=Рудаков год_рождения=2005 пол=М образование=С год_работы=2021
@@ -61,22 +61,23 @@ int main_4() {
     printf("\n%s opened for reading", file_name);
 
     struct Stuff stuff[ MAX_STUFFS ];
+    int stuff_count = 0;
 
     for (int i=0; i < MAX_STUFFS; i++) {
-        if (feof(input_file) == EOF)
-            break;
-
         if (fscanf(input_file, input_format,
             stuff[i].last_name, &stuff[i].birthday_year,
             &stuff[i].gender, &stuff[i].education, &stuff[i].job_year )
             != 5){
             break;
-//            printf("\nFailed to read file data (%d).", i+1);
-//            return 1;
         }
+        stuff_count++;
+    }
+    // here we are readed stuff_count records
+    printf("\nReaded %d records", stuff_count);
+
+    for (int i=0; i < stuff_count; i++) {
         printf("\n%d: ", i+1);
         print_stuff( &stuff[i] );
-        fgetc(input_file);// skip '\n'
     }
 
     return 0;
