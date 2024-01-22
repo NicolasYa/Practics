@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include <locale.h>
+#include <stdlib.h>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //    В файле содержатся сведения о сотрудниках лаборатории:
@@ -12,74 +12,122 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 
 #define MAX_STUFFS 100
-#define MAX_STUFF_LAST_NAME 10
+#define MAX_STUFF_LAST_NAME 15
 
-char file_name[] = "data.txt";
-char input_format[] = "фамилия=%s год_рождения=%u пол=%c образование=%c год_работы=%u\n";
-char output_format[] = "%s,\t%uг.р., пол: %s, образование: %s,\tработает с: %uг.";
+char file_name[] = "staffs.dat";
+char text_input_format[] = "%s %u %c %c %u";
+char text_output_format[] = "%15s,\tyear of birth: %u,\tgender: %s,\teducation: %s,\tjob started: %u";
 
-// Пример данных в файле:
-//    фамилия=Рудаков год_рождения=2005 пол=М образование=С год_работы=2021
-//    фамилия=Козакова год_рождения=2001 пол=Ж образование=В год_работы=2019
-//
 //////////////////////////////////////////////////////////////////////////////////////////
 
 struct Stuff
 {
     char      last_name[ MAX_STUFF_LAST_NAME ];
     unsigned  birthday_year;
-    char      gender;         // M-мужчина Ж-женщина
-    char      education;      // С-среднее В-высшее
+    char      gender;         // m/f
+    char      education;      // h/s
     unsigned  job_year;
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-void print_stuff(struct Stuff* pStuff ) {
-    if( !pStuff )
+void input_stuff(struct Stuff* pStuff) {
+    if( !pStuff ) {
         return;
+    }
+    do {
+        printf("\nEnter data as:\n"
+           "<Last name> <year of birthday> <gender(m/f)> <education(h/m)> <year of job started>\n");
+        if (scanf(text_input_format,
+                  pStuff->last_name,
+                  &pStuff->birthday_year,
+                  &pStuff->gender,
+                  &pStuff->education,
+                  &pStuff->job_year ) == 5 ) {
+            break;
+        }
+        printf("\nIncorrect data, please retry");
+    } while (1);
+}
 
-    printf( output_format,
+//////////////////////////////////////////////////////////////////////////////////////////
+
+void print_stuff(struct Stuff* pStuff) {
+    if (!pStuff) {
+        return;
+    }
+    printf( text_output_format,
             pStuff->last_name,
             pStuff->birthday_year,
-            pStuff->gender == 'М'? "мужской" : "женский",
-            pStuff->education == 'С'? "среднее" : "высшее",
+            pStuff->gender == 'm'? "male" : "female",
+            pStuff->education == 'h'? "higher" : "secondary",
             pStuff->job_year );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
 int main_4() {
-    setlocale(0,"Russian");
+    struct Stuff stuff[ MAX_STUFFS ];
+    int stuff_count = 0;
 
-    FILE* input_file;
-    input_file = fopen(file_name,"r");
-    if (input_file == NULL) {
+    printf("\nEnter staff count:\n");
+    if (scanf("%u", &stuff_count) != 1 || stuff_count > MAX_STUFFS) {
+        printf("\nError: Incorrect count");
+        return 1;
+    }
+
+    for (int i=0; i < stuff_count; i++) {
+        input_stuff(&stuff[i]);
+    }
+
+    FILE* output_file = fopen(file_name,"wb");
+    if (!output_file) {
+        printf("\nFailed to open file for writing: %s.", file_name);
+        return 1;
+    }
+
+    fwrite( &stuff_count, sizeof stuff_count, 1, output_file);
+    fwrite( stuff, sizeof(struct Stuff), stuff_count, output_file);
+    if (fclose(output_file) != 0) {
+        printf("\nFailed to close file after writing: %s.", file_name);
+        return 1;
+    }
+
+    FILE* input_file = fopen(file_name,"rb");
+    if (!input_file) {
         printf("\nFailed to open file for reading: %s.", file_name);
         return 1;
     }
     printf("\n%s opened for reading", file_name);
 
-    struct Stuff stuff[ MAX_STUFFS ];
-    int stuff_count = 0;
+    // reset data
+    memset( &stuff[0], 0, sizeof(struct Stuff)*stuff_count);
+    stuff_count = 0;
 
-    for (int i=0; i < MAX_STUFFS; i++) {
-        if (fscanf(input_file, input_format,
-            stuff[i].last_name, &stuff[i].birthday_year,
-            &stuff[i].gender, &stuff[i].education, &stuff[i].job_year )
-            != 5){
-            break;
-        }
-        stuff_count++;
+    if (fread( &stuff_count, sizeof stuff_count, 1, input_file) != 1) {
+        printf("\nFailed to read from: %s.", file_name);
+        return 1;
     }
-    // here we are readed stuff_count records
-    printf("\nReaded %d records", stuff_count);
+
+    if( fread( stuff, sizeof(struct Stuff), stuff_count, input_file) != stuff_count) {
+        printf("\nFailed to read from: %s.", file_name);
+        return 1;
+    }
+
+    if (fclose(input_file) != 0) {
+        printf("\nFailed to close file after reading: %s.", file_name);
+        return 1;
+    }
+
+    printf("\nReaded %d records:", stuff_count);
 
     for (int i=0; i < stuff_count; i++) {
         printf("\n%d: ", i+1);
         print_stuff( &stuff[i] );
     }
 
+    printf("\n");
+    system("pause");
     return 0;
 }
 
