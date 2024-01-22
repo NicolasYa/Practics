@@ -12,7 +12,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 
 #define MAX_STUFFS 100
-#define MAX_STUFF_LAST_NAME 15
+#define MAX_STUFF_SURNAME 15
 
 char file_name[] = "staffs.dat";
 char text_input_format[] = "%s %u %c %c %u";
@@ -22,7 +22,7 @@ char text_output_format[] = "%15s,\tyear of birth: %u,\tgender: %s,\teducation: 
 
 struct Stuff
 {
-    char      last_name[ MAX_STUFF_LAST_NAME ];
+    char      surname[ MAX_STUFF_SURNAME ];
     unsigned  birthday_year;
     char      gender;         // m/f
     char      education;      // h/s
@@ -33,13 +33,14 @@ struct Stuff
 
 void input_stuff(struct Stuff* pStuff) {
     if( !pStuff ) {
+        printf("\nInternal error!");
         return;
     }
     do {
         printf("\nEnter data as:\n"
-           "<Last name> <year of birthday> <gender(m/f)> <education(h/m)> <year of job started>\n");
+           "<Surname> <year of birthday> <gender(m/f)> <education(h/m)> <year of job started>\n");
         if (scanf(text_input_format,
-                  pStuff->last_name,
+                  pStuff->surname,
                   &pStuff->birthday_year,
                   &pStuff->gender,
                   &pStuff->education,
@@ -54,10 +55,11 @@ void input_stuff(struct Stuff* pStuff) {
 
 void print_stuff(struct Stuff* pStuff) {
     if (!pStuff) {
+        printf("\nInternal error!");
         return;
     }
     printf( text_output_format,
-            pStuff->last_name,
+            pStuff->surname,
             pStuff->birthday_year,
             pStuff->gender == 'm'? "male" : "female",
             pStuff->education == 'h'? "higher" : "secondary",
@@ -101,7 +103,7 @@ int main_4() {
     printf("\n%s opened for reading", file_name);
 
     // reset data
-    memset( &stuff[0], 0, sizeof(struct Stuff)*stuff_count);
+    memset( stuff, 0, sizeof(struct Stuff)*stuff_count);
     stuff_count = 0;
 
     if (fread( &stuff_count, sizeof stuff_count, 1, input_file) != 1) {
@@ -119,11 +121,38 @@ int main_4() {
         return 1;
     }
 
-    printf("\nReaded %d records:", stuff_count);
+    printf("\nReaded records: %d", stuff_count);
 
     for (int i=0; i < stuff_count; i++) {
         printf("\n%d: ", i+1);
         print_stuff( &stuff[i] );
+    }
+
+    printf("\nSearhing oldest men...");
+    int oldest_index = -1;
+    int oldest = 2024;
+    for (int i=0; i < stuff_count; i++) {
+        if (stuff[i].gender != 'm')
+            continue;
+        if (stuff[i].birthday_year < oldest) {
+            oldest = stuff[i].birthday_year;
+            oldest_index = i;
+        }
+    }
+    if (oldest_index == -1) {
+        printf("\nOldest men not found\n");
+    }
+    else {
+        printf("\nOldest men is %s", stuff[oldest_index].surname);
+   }
+
+    printf("\nList of staffs < 28 years old witn higer education:");
+    for (int i=0; i < stuff_count; i++) {
+        int age = 2024 - stuff[i].birthday_year;
+        if (age < 28) {
+            printf("\n");
+            print_stuff( &stuff[i] );
+        }
     }
 
     printf("\n");
@@ -135,10 +164,6 @@ int main_4() {
 
 int main()
 {
-//    main_1();
-//    main_2();
-//do {
-      main_4();
-//} while(1);
+    main_4();
     return 0;
 }
