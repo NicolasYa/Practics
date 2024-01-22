@@ -7,5 +7,6 @@
 		<Project filename="r5/r5_v17/r5_v17.cbp" />
 		<Project filename="r6/r6_v17/r6_v17.cbp" />
 		<Project filename="r7/r7_v17/r7_v17.cbp" />
+		<Project filename="r7/r7_v11/r7_v11.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
